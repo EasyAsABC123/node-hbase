@@ -62,22 +62,20 @@ value is "here you are".
 ```javascript
 client.getTable('my_tb').scan({
   filter: {
-  "op":"MUST_PASS_ALL","type":"FilterList","filters":[{
-
-```javascript
-  "op":"EQUAL",
-  "type":"RowFilter",
-  "comparator":{"value":"my_key_.+","type":"RegexStringComparator"}
-},{
-  "op":"EQUAL",
-  "type":"ValueFilter",
-  "comparator":{"value":"here you are","type":"BinaryComparator"}
-}
-
-```
-
-}, function(error, cells){
-  assert.ifError(error);
+    "op":"MUST_PASS_ALL","type":"FilterList",
+    "filters":[{  
+      "op":"EQUAL",
+      "type":"RowFilter",
+      "comparator":{"value":"my_key_.+","type":"RegexStringComparator"}
+    },{
+      "op":"EQUAL",
+      "type":"ValueFilter",
+      "comparator":{"value":"here you are","type":"BinaryComparator"}
+    }
+  }, 
+  function(error, cells) {
+    assert.ifError(error);
+  }
 });
 ```
 
@@ -108,19 +106,16 @@ responsibity to call `get` as long as more cells are expected.
 ```javascript
 var callback = function(error, cells){
   assert.ifError(error);
-  if(cells){
-
-```javascript
-// do something
-console.log(cells);
-// call the next iteration
-myScanner.get(callback)
-lse{
-// no more cells to iterate
-
-```
-
+  if (cells) {
+    // do something
+    console.log(cells);
+    // call the next iteration
+    myScanner.get(callback)
+  } else {
+    // no more cells to iterate
+  }
 };
+
 myScanner.get(callback);
 ```
 
@@ -129,22 +124,18 @@ use of the scanner function `continue` inside your callback
 to trigger a new iteration. Here's how:
   
 ```javascript
-myScanner.get(function(error, cells){
+myScanner.get(function(error, cells) {
   assert.ifError(error);
-  if(cells){
-
-```javascript
-// do something
-console.log(cells);
-// call the next iteration
-this.continue()
-lse{
-// no more cells to iterate
-// delete the scanner
-this.delete();
-
-```
-
+  if (cells) {
+    // do something
+    console.log(cells);
+    // call the next iteration
+    this.continue()
+  } else {
+    // no more cells to iterate
+    // delete the scanner
+    this.delete();
+  }
 });
 ```
 
